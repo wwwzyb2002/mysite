@@ -102,17 +102,17 @@ define([], function () {
                     align: 'center',
                     editor:'text'
                 }, {
-                    title: 'Action',
+                    title: '操作',
                     field: 'action',
                     width: 70,
                     align: 'center',
                     formatter: function(value, row, index) {
                         if (row.editing){
-                            var s = '<a href="#" onclick="saverow(this)">Save</a> ';
-                            var c = '<a href="#" onclick="cancelrow(this)">Cancel</a>';
+                            var s = '<a href="#" onclick="saverow(this)">保存</a> ';
+                            var c = '<a href="#" onclick="cancelrow(this)">取消</a>';
                             return s+c;
                         } else {
-                            var e = '<a href="#" onclick="editrow(this)">Edit</a> ';
+                            var e = '<a href="#" onclick="editrow(this)">编辑</a> ';
                             return e;
                         }
                     }
