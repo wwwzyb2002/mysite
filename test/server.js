@@ -8,10 +8,11 @@ define([], function () {
         initServerInfos: function (urlStr, queryParams) {
             /* 初始化服务器表 */
             $('#table-servers').datagrid({
+                title:'服务器信息列表',
                 url: urlStr,
                 queryParams: queryParams,
                 width: 1100,
-                height: 560,
+                height: 586,
                 autoRowHeight: false,
                 fitColumns: true,
                 singleSelect: true,
@@ -79,6 +80,11 @@ define([], function () {
                     info += '总内存: ' + data.mem_total + '(GB) ';
                     info += '总磁盘大小: ' + data.disk_total + '(GB)';
                     $('#p-statistics').text(info);
+                },
+                rowStyler: function(index, row) {
+                    if (row.cpu == "" || row.mem == "" || row.disk == ""){
+                        return 'background-color:pink;color:blue;font-weight:bold;';
+                    }
                 }
             });
         },
