@@ -1,0 +1,29 @@
+{
+  "total": 28,
+  "rows": [
+    {
+      "env": "UAT",
+      "name": "UAT0292",
+      "ip": "192.168.100.23",
+      "os": "Microsoft Windows Server 2008",
+      "cpu": 4,
+      "mem": 16,
+      "disk": 40,
+      "role": "WS",
+      "pd": "酒店",
+      "desc": "Cache Server"
+    },
+    {
+      "env": "QATE",
+      "name": "QATE001",
+      "ip": "192.168.100.24",
+      "os": "RedHat Enterprise Linux 7.0",
+      "cpu": 8,
+      "mem": 32,
+      "disk": 80,
+      "role": "AD",
+      "pd": "游轮",
+      "desc": "App Server"
+    }
+  ]
+}
