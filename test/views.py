@@ -8,6 +8,15 @@ from django.http import HttpResponse
 from utils import json_encode
 
 
+ENV_NAME_DICT = {
+    "1": "FAT",
+    "2": "LPT",
+    "3": "FWS",
+    "4": "ComDev",
+    "5": "UAT"
+}
+
+
 class QateServerInfo(object):
     """
     统一的服务器信息类
@@ -159,7 +168,7 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
 
     # 获取Qate的部门id和名称信息
     sql = """
-    select alias_pd_id,name from vm_maping
+    select id,name from auth_group
     """
     qate_cursor.execute(sql)
     dept_results = qate_cursor.fetchall()
@@ -167,7 +176,7 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
     pd_dict = {}
 
     for result in dept_results:
-        pd_dict[result["alias_pd_id"]] = result["name"]
+        pd_dict[result["id"]] = result["name"]
 
     sql = """
     select env_id,name,ip,image,cpu,memory,disk,role,dept_id,comments from vm
@@ -247,6 +256,7 @@ def get_all_env_infos():
     env_infos.append(QatePDInfo("所有环境", "所有环境"))
     for result in qate_results:
         tmp_info = QateEnvInfo()
+        tmp_info.id = ENV_NAME_DICT[str(result["env_id"])]
         tmp_info.name = ENV_NAME_DICT[str(result["env_id"])]
         env_infos.append(tmp_info)
 
@@ -275,7 +285,7 @@ def get_all_pd_infos():
     # 获取qate的所有PD信息
     qate_cursor = get_qate_cursor()
     sql = """
-    select distinct name from vm_maping
+    select distinct name from auth_group
     """
     qate_cursor.execute(sql)
     qate_results = qate_cursor.fetchall()
