@@ -2,16 +2,42 @@
 server.js
 */
 
+function getRowIndex(target) {
+    var tr = $(target).closest('tr.datagrid-row');
+    return parseInt(tr.attr('datagrid-row-index'));
+}
+
+function updateActions(index) {
+    $('#table-servers').datagrid('updateRow',{
+        index: index,
+        row:{}
+    });
+}
+
+function editrow(target) {
+    $('#table-servers').datagrid('beginEdit', getRowIndex(target));
+}
+
+function saverow(target) {
+    $('#table-servers').datagrid('endEdit', getRowIndex(target));
+}
+
+function cancelrow(target) {
+    $('#table-servers').datagrid('cancelEdit', getRowIndex(target));
+}
+
 define([], function () {
     console.log("server.js")
+
     return {
         initServerInfos: function (urlStr, queryParams) {
             /* 初始化服务器表 */
             $('#table-servers').datagrid({
                 title:'服务器信息列表',
                 url: urlStr,
+                updateUrl: 'updateserver',
                 queryParams: queryParams,
-                width: 1100,
+                width: 1200,
                 height: 586,
                 autoRowHeight: false,
                 fitColumns: true,
@@ -61,18 +87,53 @@ define([], function () {
                     title: "角色",
                     field: 'role',
                     width: 60,
-                    align: 'center'
+                    align: 'center',
+                    editor:'text'
                 }, {
                     title: "PD",
                     field: 'pd',
                     width: 60,
-                    align: 'center'
+                    align: 'center',
+                    editor:'text'
                 }, {
                     title: "描述",
                     field: 'desc',
                     width: 150,
-                    align: 'center'
+                    align: 'center',
+                    editor:'text'
+                }, {
+                    title: 'Action',
+                    field: 'action',
+                    width: 70,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        if (row.editing){
+                            var s = '<a href="#" onclick="saverow(this)">Save</a> ';
+                            var c = '<a href="#" onclick="cancelrow(this)">Cancel</a>';
+                            return s+c;
+                        } else {
+                            var e = '<a href="#" onclick="editrow(this)">Edit</a> ';
+                            return e;
+                        }
+                    }
                 }]],
+                rowStyler: function(index, row) {
+                    if (row.cpu == "" || row.mem == "" || row.disk == ""){
+                        return 'background-color:pink;color:blue';
+                    }
+                },
+                onBeforeEdit:function(index,row) {
+                    row.editing = true;
+                    updateActions(index);
+                },
+                onAfterEdit:function(index,row) {
+                    row.editing = false;
+                    updateActions(index);
+                },
+                onCancelEdit:function(index,row) {
+                    row.editing = false;
+                    updateActions(index);
+                },
                 onLoadSuccess: function(data) {
                     // 加载完数据后更新统计信息
                     console.log(data);
@@ -80,11 +141,6 @@ define([], function () {
                     info += '总内存: ' + data.mem_total + '(GB) ';
                     info += '总磁盘大小: ' + data.disk_total + '(GB)';
                     $('#p-statistics').text(info);
-                },
-                rowStyler: function(index, row) {
-                    if (row.cpu == "" || row.mem == "" || row.disk == ""){
-                        return 'background-color:pink;color:blue;font-weight:bold;';
-                    }
                 }
             });
         },
