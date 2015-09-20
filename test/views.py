@@ -179,7 +179,7 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
 
     for result in qate_results:
         tmp_server = QateServerInfo()
-        tmp_server.env = str(result["env_id"])
+        tmp_server.env = ENV_NAME_DICT[str(result["env_id"])]
         tmp_server.name = result["name"]
         tmp_server.ip = result["ip"]
         tmp_server.os = result["image"]
@@ -247,8 +247,7 @@ def get_all_env_infos():
     env_infos.append(QatePDInfo("所有环境", "所有环境"))
     for result in qate_results:
         tmp_info = QateEnvInfo()
-        tmp_info.id = str(result["env_id"])
-        tmp_info.name = str(result["env_id"])
+        tmp_info.name = ENV_NAME_DICT[str(result["env_id"])]
         env_infos.append(tmp_info)
 
     # 加上UAT
