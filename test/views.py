@@ -310,6 +310,34 @@ def sort_by_gbk(pd_infos):
     return sorted(pd_infos, key=getKey1)
 
 
+def update_server_info(info):
+    """
+    更新pd信息
+    """
+    # 如果是UAT的环境，需要去uat表修改
+    if info.env == "UAT":
+        uat_cursor = get_uat_cursor()
+        sql = """
+        update simplecmdb_server set Pd_id='%s',Role='%s',Comments='%s'
+        where IPAddress='%s'
+        """ % (info.pd, info.role, info.desc, info.ip)
+        print sql
+        uat_cursor.execute(sql)
+        uat_cursor.execute("commit")
+        uat_cursor.close()
+    # 非UAT环境去Qate表里面修改
+    else:
+        qate_cursor = get_qate_cursor()
+        sql = """
+        update vm set role='%s',comments='%s'
+        where ip='%s' and name='%s'
+        """ % (info.role, info.desc, info.ip, info.name)
+        print sql
+        qate_cursor.execute(sql)
+        qate_cursor.execute("commit")
+        qate_cursor.close()
+
+
 def getpageserverinfos(request):
     env = request.POST.get('env').encode("utf-8")
     pd = request.POST.get('pd').encode("utf-8")
@@ -338,6 +366,23 @@ def getenvnames(request):
 def getpdnames(request):
     all_pd_infos = get_all_pd_infos()
     response = json_encode(all_pd_infos)
+    return HttpResponse(response, content_type="application/json")
+
+
+def updateserver(request):
+    server = QateServerInfo()
+    server.ip = request.POST.get('ip').encode("utf-8")
+    server.name = request.POST.get('name').encode("utf-8")
+    server.env = request.POST.get('env').encode("utf-8")
+    server.pd = request.POST.get('pd').encode("utf-8")
+    server.role = request.POST.get('role').encode("utf-8")
+    server.desc = request.POST.get('desc').encode("utf-8")
+
+    update_server_info(server)
+
+    response = json_encode({
+        "result": "ok"
+    })
     return HttpResponse(response, content_type="application/json")
 
 

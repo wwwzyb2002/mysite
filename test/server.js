@@ -19,7 +19,15 @@ function editrow(target) {
 }
 
 function saverow(target) {
+    var index = getRowIndex(target);
     $('#table-servers').datagrid('endEdit', getRowIndex(target));
+
+    var rows = $('#table-servers').datagrid('getRows');
+    var row = rows[index];
+    $.ajax("/api/qate/updateserver/", {
+        type: 'POST',
+        data: row,
+    });
 }
 
 function cancelrow(target) {
@@ -35,7 +43,6 @@ define([], function () {
             $('#table-servers').datagrid({
                 title:'服务器信息列表',
                 url: urlStr,
-                updateUrl: 'updateserver',
                 queryParams: queryParams,
                 width: 1200,
                 height: 586,

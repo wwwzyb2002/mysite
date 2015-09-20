@@ -7,4 +7,5 @@ urlpatterns = patterns(
     (r'^getpageserverinfos/$', 'getpageserverinfos'),
     (r'^getenvnames/$', 'getenvnames'),
     (r'^getpdnames/$', 'getpdnames'),
+    (r'^updateserver/$', 'updateserver'),
 )
