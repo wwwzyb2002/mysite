@@ -285,13 +285,16 @@ def get_all_pd_infos():
     # 获取qate的所有PD信息
     qate_cursor = get_qate_cursor()
     sql = """
-    select distinct name from auth_group
+    select id,name from auth_group
     """
     qate_cursor.execute(sql)
     qate_results = qate_cursor.fetchall()
     qate_cursor.close()
 
     for result in qate_results:
+        # 表中有两个服务产品研发部，过滤掉116
+        if result["id"] == 116:
+            continue
         names_set.add(result["name"])
 
     pd_infos = []
