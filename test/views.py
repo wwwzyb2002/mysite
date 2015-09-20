@@ -118,13 +118,13 @@ def need_filter_server(server_info, filter_env_name, filter_pd_name, key):
         if filter_env_name == "所有环境" and filter_pd_name == "所有PD":
             return False
         elif filter_env_name == "所有环境" and filter_pd_name != "所有PD":
-            if filter_pd_name == server_info.pd:
+            if filter_pd_name.lower() == server_info.pd.lower():
                 return False
         elif filter_env_name != "所有环境" and filter_pd_name == "所有PD":
-            if filter_env_name == server_info.env:
+            if filter_env_name.lower() == server_info.env.lower():
                 return False
         else:
-            if filter_pd_name == server_info.pd and filter_env_name == server_info.env:
+            if filter_pd_name.lower() == server_info.pd.lower() and filter_env_name.lower() == server_info.env.lower():
                 return False
 
     return True
