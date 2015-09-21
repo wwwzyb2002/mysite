@@ -130,14 +130,12 @@ def need_filter_server(server_info, filter_env_name, filter_pd_name, key):
     return True
 
 
-def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum, pageSize):
+def get_uat_server_info():
     """
-    从数据库表中获取数据，并解析成dict
+    获取uat的所有服务器信息
     """
-    # import pdb; pdb.set_trace()
-    uat_cursor = get_uat_cursor()
-
     # 获取uat的所有服务器信息
+    uat_cursor = get_uat_cursor()
     sql = """
     select HostName,IPAddress,OSInfo,CPUInfo,MemInfo,DiskTotal,Role,Comments,Pd_id from simplecmdb_server
     order by Pd_id, Role
@@ -146,7 +144,7 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
     uat_results = uat_cursor.fetchall()
     uat_cursor.close()
 
-    all_server_infos = []
+    uat_server_infos = []
     for result in uat_results:
         tmp_server = QateServerInfo()
         tmp_server.env = "UAT"
@@ -161,9 +159,14 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
         tmp_server.role = result["Role"]
         tmp_server.pd = result["Pd_id"]
         tmp_server.desc = result["Comments"]
-        all_server_infos.append(tmp_server)
+        uat_server_infos.append(tmp_server)
+    return uat_server_infos
 
-    # 获取QATE的所有服务器信息
+
+def get_qate_server_info():
+    """
+    获取QATE的所有服务器信息
+    """
     qate_cursor = get_qate_cursor()
 
     # 获取Qate的部门id和名称信息
@@ -186,6 +189,7 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
     qate_results = qate_cursor.fetchall()
     qate_cursor.close()
 
+    qate_server_infos = []
     for result in qate_results:
         tmp_server = QateServerInfo()
         tmp_server.env = ENV_NAME_DICT[str(result["env_id"])]
@@ -204,7 +208,15 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
             tmp_server.pd = result["dept_id"]
         tmp_server.desc = result["comments"]
 
-        all_server_infos.append(tmp_server)
+        qate_server_infos.append(tmp_server)
+    return qate_server_infos
+
+
+def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum, pageSize):
+    """
+    从数据库表中获取数据，并解析成dict
+    """
+    all_server_infos = get_uat_server_info() + get_qate_server_info()
 
     page_server_infos = []
     start = pageNum * pageSize
