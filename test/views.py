@@ -73,7 +73,7 @@ def get_uat_cursor():
     获取uat数据库连接
     """
     uat_conn = MySQLdb.connect(
-        host="192.168.1.109",
+        host="192.168.136.23",
         port=3306,
         user="test",
         passwd="test",
@@ -91,7 +91,7 @@ def get_qate_cursor():
     获取qate数据库连接
     """
     qate_conn = MySQLdb.connect(
-        host="192.168.1.109",
+        host="192.168.136.23",
         port=3306,
         user="test",
         passwd="test",
@@ -179,8 +179,8 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
         pd_dict[result["id"]] = result["name"]
 
     sql = """
-    select env_id,name,ip,image,cpu,memory,disk,role,dept_id,comments from vm
-    order by dept_id, role
+    select env_id,name,ip,image,cpu,memory,disk,dept_id,comments from vm
+    order by dept_id
     """
     qate_cursor.execute(sql)
     qate_results = qate_cursor.fetchall()
@@ -197,7 +197,7 @@ def get_page_server_infos_from_db(filter_env_name, filter_pd_name, key, pageNum,
         tmp_server.mem = result["memory"]
         tmp_server.disk = result["disk"]
 
-        tmp_server.role = result["role"]
+        tmp_server.role = ""
         if result["dept_id"] in pd_dict:
             tmp_server.pd = pd_dict[result["dept_id"]]
         else:
@@ -341,9 +341,9 @@ def update_server_info(info):
     else:
         qate_cursor = get_qate_cursor()
         sql = """
-        update vm set role='%s',comments='%s'
+        update vm set comments='%s'
         where ip='%s' and name='%s'
-        """ % (info.role, info.desc, info.ip, info.name)
+        """ % (info.desc, info.ip, info.name)
         print sql
         qate_cursor.execute(sql)
         qate_cursor.execute("commit")
