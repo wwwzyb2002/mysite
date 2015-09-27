@@ -19,5 +19,6 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns(
     '',
     url(r'^$', 'test.views.index'),
-    url(r'^api/qate/', include('test.urls'))
+    url(r'^api/qate/', include('test.urls')),
+    url(r'^api/uat/', include('uat.urls'))
 )
